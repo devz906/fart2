@@ -13,7 +13,7 @@ jobs:
           # Compile the main binary
           clang -target arm64-apple-ios17.0 -isysroot "$SDK_PATH" Sources/JIT/main.c -o Payload/Titan.app/Titan
           
-          # New Info.plist with full Document Support
+          # Info.plist V3 - Full Document Support
           cat <<EOP > Payload/Titan.app/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -22,6 +22,8 @@ jobs:
               <key>CFBundleIdentifier</key><string>com.titan.ios</string>
               <key>CFBundleName</key><string>Titan</string>
               <key>CFBundlePackageType</key><string>APPL</string>
+              <key>CFBundleShortVersionString</key><string>3.0</string>
+              <key>CFBundleVersion</key><string>3.0</string>
               <key>LSRequiresIPhoneOS</key><true/>
               <key>UIFileSharingEnabled</key><true/>
               <key>LSSupportsOpeningDocumentsInPlace</key><true/>
@@ -30,10 +32,10 @@ jobs:
           </dict></plist>
           EOP
           
-          ditto -c -k --sequesterRsrc --keepParent Payload Titan_Hollow.ipa
+          ditto -c -k --sequesterRsrc --keepParent Payload Titan_Hollow_V3.ipa
           
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: Titan-Hollow-IPA
-          path: Titan_Hollow.ipa
+          name: Titan-V3-IPA
+          path: Titan_Hollow_V3.ipa
