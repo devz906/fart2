@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <dlfcn.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -19,40 +20,50 @@ int main() {
 
     // 2. Identify Paths
     char *home = getenv("HOME");
-    if (!home) return 1;
+    if (!home) {
+        printf("[!] Critical: No HOME directory found.\n");
+        return 1;
+    }
 
     char doc_path[512];
     snprintf(doc_path, sizeof(doc_path), "%s/Documents", home);
     printf("[*] Path: %s\n", doc_path);
 
     // 3. Keep Alive & Scan Loop
-    for (int i = 0; i < 10; i++) {
-        printf("\n--- Scan Attempt %d/10 ---\n", i + 1);
+    for (int i = 0; i < 15; i++) {
+        printf("\n--- Scan Attempt %d/15 ---\n", i + 1);
         
         DIR *d = opendir(doc_path);
         if (d) {
             struct dirent *dir;
             int found = 0;
             while ((dir = readdir(d)) != NULL) {
+                // Ignore hidden files
                 if (dir->d_name[0] == '.') continue;
+                
                 printf("  Found: %s\n", dir->d_name);
-                if (strcmp(dir->d_name, "Engine") == 0) found = 1;
+                if (strcmp(dir->d_name, "Engine") == 0) {
+                    found = 1;
+                }
             }
             closedir(d);
 
             if (found) {
-                printf("[✅] ENGINE DETECTED! Ready for launch.\n");
+                printf("[✅] SUCCESS: 'Engine' folder detected!\n");
+                printf("[*] Ready for Wine startup.\n");
                 break; 
             } else {
                 printf("[❌] Engine folder missing in Titan directory.\n");
             }
+        } else {
+            printf("[!] Could not open Documents folder.\n");
         }
         
-        printf("Waiting 5s for you to move files...\n");
+        printf("Waiting 5s... Move 'Engine' folder into 'On My iPhone > Titan'\n");
         sleep(5);
     }
 
     printf("\n=== DIAGNOSTICS COMPLETE ===\n");
-    sleep(10); // Final pause to read logs
+    sleep(15); 
     return 0;
 }
