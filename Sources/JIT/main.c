@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <dlfcn.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -17,14 +18,17 @@ int main() {
 
     // Engine Check
     char *home = getenv("HOME");
-    char path[512];
-    snprintf(path, sizeof(path), "%s/Documents/Engine", home);
+    if (home) {
+        char path[512];
+        snprintf(path, sizeof(path), "%s/Documents/Engine", home);
 
-    struct stat st;
-    if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) {
-        printf("STATUS: Engine Found in Files App!\n");
-    } else {
-        printf("STATUS: Engine Missing. Place folder in: On My iPhone > Titan\n");
+        struct stat st;
+        if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) {
+            printf("STATUS: Engine Found in Files App!\n");
+        } else {
+            printf("STATUS: Engine Missing. Place folder in: On My iPhone > Titan\n");
+            printf("Looked in: %s\n", path);
+        }
     }
 
     // Keep app alive to prevent "Code 0"
