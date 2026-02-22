@@ -9,7 +9,11 @@ jobs:
         run: |
           SDK_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
           mkdir -p Payload/Titan.app
+          
+          # Compile the main binary
           clang -target arm64-apple-ios17.0 -isysroot "$SDK_PATH" Sources/JIT/main.c -o Payload/Titan.app/Titan
+          
+          # New Info.plist with full Document Support
           cat <<EOP > Payload/Titan.app/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -17,11 +21,17 @@ jobs:
               <key>CFBundleExecutable</key><string>Titan</string>
               <key>CFBundleIdentifier</key><string>com.titan.ios</string>
               <key>CFBundleName</key><string>Titan</string>
+              <key>CFBundlePackageType</key><string>APPL</string>
+              <key>LSRequiresIPhoneOS</key><true/>
               <key>UIFileSharingEnabled</key><true/>
               <key>LSSupportsOpeningDocumentsInPlace</key><true/>
+              <key>UISupportsDocumentBrowser</key><true/>
+              <key>MinimumOSVersion</key><string>17.0</string>
           </dict></plist>
           EOP
+          
           ditto -c -k --sequesterRsrc --keepParent Payload Titan_Hollow.ipa
+          
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
